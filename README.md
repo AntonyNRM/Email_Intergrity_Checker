@@ -46,5 +46,6 @@ If you're using Gmail and have 2-Step Verification enabled, you cannot use your 
 4. Under Select Device, choose Other and type something like EmailChecker.
 5. Click Generate.
 6. Copy the 16-character password shown and use it in this application under the Password field.
+
 ⚠️ You must also ensure that IMAP is enabled in your Gmail settings:
 - Go to Gmail → Settings → See all settings → Forwarding and POP/IMAP → Enable IMAP → Save Changes.
