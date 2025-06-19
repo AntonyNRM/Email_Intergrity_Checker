@@ -40,7 +40,7 @@ pip install -r requirements.txt
 
 ## 🔐 How to Use Gmail IMAP with App Password
 If you're using Gmail and have 2-Step Verification enabled, you cannot use your regular password for IMAP access. Instead, follow these steps to generate an App Password:
-1. Go to Google My Account – App Passwords.
+1. Go to [Google My Account – App Passwords](https://myaccount.google.com/apppasswords).
 2. Sign in and verify your 2FA if prompted.
 3. Under Select App, choose Mail.
 4. Under Select Device, choose Other and type something like EmailChecker.
