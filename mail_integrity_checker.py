@@ -1,4 +1,3 @@
-# -----------------------------------------------------------------------------------------------
 import sys, re, email, ipaddress, subprocess, shlex, requests, dns.resolver, tldextract, whois
 import keyring, getpass, json, os, base64
 from email.header import decode_header, make_header
@@ -7,6 +6,7 @@ from imapclient   import IMAPClient
 import dkim, spf
 from checkdmarc   import dmarc
 import dns.resolver
+
 # ── Qt imports ───────────────────────────────────────────────────────
 import PySide6.QtWidgets as QtWidgets
 from PySide6.QtWidgets import (
@@ -38,7 +38,7 @@ def _kr_get(key: str) -> str | None:
     try:
         return keyring.get_password(APP_ID, key)
     except keyring.errors.KeyringError:
-        return None       # e.g. backend unavailable
+        return None      
 
 def load_settings() -> dict:
     """Non-secret UI prefs (e.g. remember flags) from tiny json."""
@@ -58,8 +58,8 @@ def _clean_ascii(s: str) -> str:
     if not s:
         return s
     cleaned = (
-        s.replace("\u00A0", " ")   # NBSP
-         .replace("\u200B", "")    # zero-width space
+        s.replace("\u00A0", " ")   
+         .replace("\u200B", "")   
          .strip()
     )
     try:
@@ -93,7 +93,7 @@ def get_dmarc_policy(domain: str):
                     k, v = part.split("=", 1)
                     tags[k.strip().lower()] = v.strip()
 
-            return tags.get("p", "not set"), txt         # <- policy + raw TXT
+            return tags.get("p", "not set"), txt         
         return None, "not published"
     except Exception as e:
         return None, f"error – {e}"
@@ -144,8 +144,8 @@ def is_ip_in_mx_records(domain: str, sender_ip: str) -> bool:
 
 class AnalyseWorker(QThread):
     progress = Signal(str)
-    done     = Signal(str)        # final analysis text
-    risk     = Signal(str)        # ok / warn / critical
+    done     = Signal(str)       
+    risk     = Signal(str)        
 
     def __init__(self, raw_msg: bytes, main_window):
         super().__init__()
@@ -225,7 +225,7 @@ def analyse_email(raw_msg: bytes, main, progress_cb=lambda _: None) -> tuple[str
         dmarc_text = f"policy={policy}\nDMARC  Record     : {dmarc_raw}"
         dmarc_failed = policy.lower() not in ("reject", "quarantine")
     else:
-        dmarc_text = dmarc_raw  # could be "error – ..." or "not published"
+        dmarc_text = dmarc_raw 
         dmarc_failed = True
 
     lines.append(f"DMARC              : {dmarc_text}{flag(dmarc_failed)}")
@@ -239,6 +239,7 @@ def analyse_email(raw_msg: bytes, main, progress_cb=lambda _: None) -> tuple[str
                         if k.lower() in ("domainkey-signature", "dkim-signature")), None)
     msg_id      = headers.get("Message-ID", "–")
     mime_ver    = headers.get("MIME-Version", "–")
+
     # Extract all Received headers (may be multiple)
     received_headers = [v for k, v in headers.items() if k.lower() == "received"]
 
@@ -308,7 +309,7 @@ def analyse_email(raw_msg: bytes, main, progress_cb=lambda _: None) -> tuple[str
 
                 # Optional: Lookup scan verdict (wait a bit before checking)
                 import time
-                time.sleep(3)  # wait for scan to finish; adjust if needed
+                time.sleep(3) 
 
                 verdict_resp = requests.get(f"https://urlscan.io/api/v1/result/{uid}", headers=hdrs, timeout=10).json()
                 verdicts = verdict_resp.get("verdicts", {})
@@ -431,7 +432,7 @@ class MailboxTab(QWidget):
     def _load_messages_from(self, folder: str):
         """Select *folder* and show its newest N messages with a responsive UI."""
         try:
-            # ①-- Indefinite (“busy”) bar for the first long operations
+            # Indefinite (“busy”) bar for the first long operations
             busy = QProgressDialog("Loading mailbox…", None, 0, 0, self)
             busy.setWindowFlags(Qt.FramelessWindowHint | Qt.Dialog)
             busy.setCancelButton(None)
@@ -442,12 +443,12 @@ class MailboxTab(QWidget):
 
             self.client.select_folder(folder, readonly=True)
 
-            uids  = self.client.search("ALL")               # may take a while…
+            uids  = self.client.search("ALL")              
             dates = self.client.fetch(uids, ["INTERNALDATE"])
 
-            busy.close()                                    # done with long calls
+            busy.close()                               
 
-            # ②-- Now switch to a thin, determinate bar for chunked fetch
+            # Now switch to a thin, determinate bar for chunked fetch
             newest = sorted(uids,
                             key=lambda uid: dates[uid][b"INTERNALDATE"],
                             reverse=True)[:self.FETCH_LIMIT]
@@ -465,11 +466,11 @@ class MailboxTab(QWidget):
                 part = newest[i:i+50]
                 envs.update(self.client.fetch(part, ["ENVELOPE"]))
                 prog.setValue(min(i + 50, len(newest)))
-                QCoreApplication.processEvents()            # keep GUI alive
+                QCoreApplication.processEvents()         
 
             prog.close()
 
-            # ③-- Build the list-box (unchanged)
+            # Build the list-box (unchanged)
             self.listbox.clear()
             for uid in newest:
                 env = envs.get(uid)
@@ -492,7 +493,7 @@ class MailboxTab(QWidget):
         try:
             for flags, delim, name in self.client.list_folders():
                 # Skip Gmail “[Gmail]” container itself
-                if name in ("[Gmail]", "[Gmail]/Spam"):          # example skips
+                if name in ("[Gmail]", "[Gmail]/Spam"):         
                     continue
                 self.cmb_folder.addItem(name)
         except Exception:
@@ -513,7 +514,7 @@ class MailboxTab(QWidget):
         self.user = QLineEdit(); self.user.setPlaceholderText("Username")
         self.pwd  = QLineEdit(); self.pwd.setPlaceholderText("Password")
         self.pwd.setEchoMode(QLineEdit.Password)
-        self.cmb_folder = QComboBox(); self.cmb_folder.setMinimumWidth(140)  # NEW
+        self.cmb_folder = QComboBox(); self.cmb_folder.setMinimumWidth(140) 
         self.cmb_folder.currentTextChanged.connect(
             lambda name: self._load_messages_from(name) if self.client else None)
         vbox.addWidget(self.cmb_folder)
@@ -552,7 +553,7 @@ class MailboxTab(QWidget):
             _kr_set("IMAP_HOST", self.host.text().strip())
             _kr_set("IMAP_USER", self.user.text().strip())
             _kr_set("IMAP_PASS", self.pwd .text().strip())
-        else:                              # wipe previous secrets
+        else:                           
             _kr_set("IMAP_HOST", ""); _kr_set("IMAP_USER", ""); _kr_set("IMAP_PASS", "")
 
         prefs = load_settings()
@@ -588,7 +589,7 @@ class MailboxTab(QWidget):
 
             # ---------- list folders & (re)fill combo ----------
             folders = [f[2] for f in self.client.list_folders()]
-            self.cmb_folder.blockSignals(True)          # don’t fire ‘changed’ while filling
+            self.cmb_folder.blockSignals(True)       
             self.cmb_folder.clear()
             self.cmb_folder.addItems(sorted(folders))
             self.cmb_folder.blockSignals(False)
