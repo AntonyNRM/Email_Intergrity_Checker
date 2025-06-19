@@ -1,6 +1,6 @@
 # Email Integrity Checker
 
-A powerful PySide6-based desktop application to analyze emails for spoofing, phishing, and red flags. It supports both `.eml` file analysis and direct connection to IMAP mailboxes. The tool verifies SPF, DKIM, and DMARC records, flags private/internal IPs, and integrates optional threat intelligence using VirusTotal, URLScan, and WHOIS.
+A python based desktop application to analyze emails for spoofing, phishing, and red flags. It supports both `.eml` file analysis and direct connection to IMAP mailboxes. The tool verifies SPF, DKIM, and DMARC records, flags private/internal IPs, and integrates optional threat intelligence using VirusTotal, URLScan, and WHOIS.
 
 ---
 
