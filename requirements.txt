@@ -1,1 +1,12 @@
-pip install email-validator dnspython dkimpy pyspf checkdmarc PySide6 imapclient service_identity dnspython tldextract python-whois keyring
+email-validator
+dnspython
+dkimpy
+pyspf
+checkdmarc
+PySide6
+imapclient
+service_identity
+dnspython
+tldextract
+python-whois
+keyring
