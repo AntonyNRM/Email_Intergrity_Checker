@@ -21,7 +21,8 @@ A python based desktop application to analyze emails for spoofing, phishing, and
 
 ## 🖼️ Screenshot
 
-> _![image](https://github.com/user-attachments/assets/54d14e2b-aa10-4801-969a-311c00d51f46)_
+> _![image](https://github.com/user-attachments/assets/b40f5770-edfe-4473-bc07-441ef4277676)_
+> _![image](https://github.com/user-attachments/assets/12583ef6-403a-4fb4-85c1-9d047770c5f7)_
 
 
 ---
